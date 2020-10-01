@@ -1,7 +1,10 @@
 /* Server Side -- Stripe API calls */
+
 require('dotenv').config();
 const stripe = require('stripe')(process.env.STRIPE_API_KEY);
 const UTILS = require('../utils/format-numbers.js');
+
+//to grab all of your Stripe account's products and plans
 
 function getAllProductsAndPlans() {
   return Promise.all(
@@ -55,6 +58,7 @@ function createPlan(requestBody) {
   });
 }
 
+//creating a customer from a token and then creating a subscription from a customer
 
 function createCustomerAndSubscription(requestBody) {
   return stripe.customers.create({

@@ -2,6 +2,12 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const nunjucks = require('nunjucks');
 
+/*We will use the body-parser package to parse incoming request bodies as "req.body" in our server-side code.
+ We will use nunjucks for templating and passing data into our HTML files. 
+ We will use the dotenv package to house Stripe Secret keys. 
+Lastly, we will use the stripe package to make Stripe API calls.*/
+
+
 const app = express();
 const port = 3000;
 const router = express.Router();
@@ -10,6 +16,7 @@ const STRIPE_API = require('./api/stripe-functions.js');
 
 
 /* Set up Express to serve HTML files using "res.render" with help of Nunjucks */
+
 app.set('view engine', 'html');
 app.engine('html', nunjucks.render);
 nunjucks.configure('views', { noCache: true });
@@ -18,6 +25,11 @@ app.use(express.static(__dirname));
 app.use('/styles', express.static('styles'));
 app.use(bodyParser());
 app.use('/', router);
+
+
+/*difference: 
+A Product is essentially the subscription service you are offering. 
+A Product can have many Plans. A Subscription connects a Customer to a Plan. */
 
 
 /* Place all routes here */
@@ -56,6 +68,8 @@ router.post('/createPlanForReal', (req, res) => {
   });
 });
 
+//render our Customer View and pass in the filtered product data
+   
 router.get('/customerView', (req, res) => {
   STRIPE_API.getAllProductsAndPlans().then(products => {
     products = products.filter(product => {
@@ -66,6 +80,7 @@ router.get('/customerView', (req, res) => {
   });
 });
 
+//take the submitted product and plan data and pass it to a plan-specific sign up page
 
 router.post('/signUp', (req, res) => {
   var product = {
@@ -103,6 +118,7 @@ router.post('/processPayment', (req, res) => {
     res.render('signup.html', {product: product, plan: plan, error: true});
   });
 });
+
 
 
 /* Listening on port */
